@@ -1,0 +1,17 @@
+version: "3.9"  # optional since v1.27.0
+services:
+  kamailio:
+    ports:
+      - "5060:5060"
+    image: pch-kamailio
+    volumes:
+      - ./kamailio.cfg:/etc/kamailio/kamailio.cfg
+    environment:
+      PUBLIC_IPV4: 192.168.1.200
+    entrypoint: /bin/sleep infinity
+  rtpengine:
+    image: pch-rtpengine
+    volumes:
+      # - ./kamailio.cfg:/etc/kamailio/kamailio.cfg
+      - /srv/rtpengine/recordings:/srv/rtpengine/recordings
+    entrypoint: /bin/sleep infinity

@@ -15,13 +15,13 @@ export PID_FILE
 mkdir -p /data/kamailio
 touch /data/kamailio/dispatcher.list
 
-: ${PRIVATE_IPV4="$(netdiscover -field privatev4 ${PROVIDER})"}
-: ${PUBLIC_IPV4="$(netdiscover -field publicv4 ${PROVIDER})"}
+: ${PRIVATE_IPV4:="$(netdiscover -field privatev4 ${PROVIDER})"}
+: ${PUBLIC_IPV4:="$(netdiscover -field publicv4 ${PROVIDER})"}
 : ${PUBLIC_HOSTNAME="$(netdiscover -field hostname ${PROVIDER})"}
 
 cat <<ENDHERE >/data/kamailio/local.k
 alias=${PUBLIC_IPV4}
-listen=udp:${PRIVATE_IPV4}:5060 advertise k8s_loadbalencer_domain:5060
+listen=udp:${PRIVATE_IPV4}:5060 advertise ${PUBLIC_IPV4}:5060
 listen=udp:${PRIVATE_IPV4}:5080
 ENDHERE
 
