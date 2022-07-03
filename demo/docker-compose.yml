@@ -2,16 +2,37 @@ version: "3.9"  # optional since v1.27.0
 services:
   kamailio:
     ports:
-      - "5060:5060"
+      - "5060:5060/udp"
     image: pch-kamailio
     volumes:
       - ./kamailio.cfg:/etc/kamailio/kamailio.cfg
     environment:
-      PUBLIC_IPV4: 192.168.1.200
+      PUBLIC_IPV4: 192.168.1.218
     entrypoint: /bin/sleep infinity
+    ports:
+      - "5060:5060/udp"
   rtpengine:
     image: pch-rtpengine
     volumes:
-      # - ./kamailio.cfg:/etc/kamailio/kamailio.cfg
       - /srv/rtpengine/recordings:/srv/rtpengine/recordings
     entrypoint: /bin/sleep infinity
+    expose:
+      - "2223/udp"      # ng control protocol
+    ports:
+      - "20000-20010:20000-20010/udp"
+  mysqldb:
+    image: mysql:8.0.29
+    restart: always
+    # use the old authentication plugin, because kamailio is not support new authentication method
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      # MYSQL_ROOT_PASSWORD:
+      MYSQL_DATABASE: kamailio
+      MYSQL_USER: kamailio
+      MYSQL_PASSWORD: kamailiorw
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+    volumes:
+      - /srv/mysql:/var/lib/mysql
+      # store the database file
+      - ./init-db-sql-files:/docker-entrypoint-initdb.d
+    # entrypoint: /bin/sleep infinity
