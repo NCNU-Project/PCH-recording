@@ -14,8 +14,10 @@ else
   MY_IP=$PUBLIC_IP
 fi
 
-sed -i -e "s/MY_IP/$MY_IP/g" /etc/rtpengine/rtpengine.conf
-sed -i -e "s/PRIVATE_IP/$PRIVATE_IPV4/g" /etc/rtpengine/rtpengine.conf
+echo $@
+
+echo "$(sed -e "s/MY_IP/$MY_IP/g" /etc/rtpengine/rtpengine.conf)" > /etc/rtpengine/rtpengine.conf
+echo "$(sed -e "s/PRIVATE_IP/$PRIVATE_IPV4/g" /etc/rtpengine/rtpengine.conf)" > /etc/rtpengine/rtpengine.conf
 
 cat /etc/rtpengine/rtpengine.conf
 
@@ -23,5 +25,6 @@ if [ "$1" = 'rtpengine' ]; then
   shift
   exec rtpengine --config-file /etc/rtpengine/rtpengine.conf  "$@"
 fi
+
 
 exec "$@"

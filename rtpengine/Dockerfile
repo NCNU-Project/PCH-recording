@@ -8,7 +8,7 @@ RUN apt-get update \
   && wget http://ms15.voip.edu.tw/~jerry/build.tar.gz -O "$TMP_DIR/build.tar.gz" \
   && tar -zxvf "$TMP_DIR/build.tar.gz" -C $TMP_DIR \
   && dpkg -i $TMP_DIR/build/bcg729/libbcg729-*.deb \
-  && apt --fix-broken install -y $TMP_DIR/build/rtpengine/ngcp-rtpengine-daemon_*.deb \
+  && apt --fix-broken install -y $TMP_DIR/build/rtpengine/ngcp-rtpengine-daemon_*.deb $TMP_DIR/build/rtpengine/ngcp-rtpengine-recording-daemon_*.deb \
   && rm -rf $TMP_DIR \
   && rm -rf /var/lib/apt/* \
   && rm -rf /var/lib/cache/* \
