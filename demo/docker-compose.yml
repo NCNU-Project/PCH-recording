@@ -3,32 +3,37 @@ services:
   mysqldb:
     image: mysql:8.0.29
     restart: always
-    # use the old authentication plugin, because kamailio is not support new authentication method
-    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - /srv/mysql:/var/lib/mysql
+      # store the database file
+      - ./init-db-sql-files:/docker-entrypoint-initdb.d
     environment:
       # MYSQL_ROOT_PASSWORD:
       MYSQL_DATABASE: kamailio
       MYSQL_USER: kamailio
       MYSQL_PASSWORD: kamailiorw
       MYSQL_RANDOM_ROOT_PASSWORD: "yes"
-    volumes:
-      - /srv/mysql:/var/lib/mysql
-      # store the database file
-      - ./init-db-sql-files:/docker-entrypoint-initdb.d
+    # use the old authentication plugin, because kamailio is not support new authentication method
+    command: --default-authentication-plugin=mysql_native_password
     # entrypoint: /bin/sleep infinity
   kamailio:
-    ports:
-      - "5060:5060/udp"
     image: efficacy38/pch-kamailio
+    restart: always
     volumes:
       - ./kamailio.cfg:/etc/kamailio/kamailio.cfg
+    depends_on:
+      - mysqldb
+      - rtpengine
+      - rtpengine-recorder
     environment:
       PUBLIC_IPV4: 192.168.1.203
     # entrypoint: /bin/sleep infinity
+    # command: ["./wait-for-it.sh", "mysqldb:3306", "--", "/entrypoint.sh"]
     ports:
       - "5060:5060/udp"
   rtpengine:
     image: efficacy38/pch-rtpengine
+    restart: always
     volumes:
       - ./rtpengine.conf:/etc/rtpengine/rtpengine.conf
       - /tmp/rtpengine/spool:/var/spool/rtpengine
@@ -40,9 +45,18 @@ services:
       - "20000-20010:20000-20010/udp"
   rtpengine-recorder:
     image: efficacy38/pch-rtpengine-recording
-    pid: "container:demo_rtpengine_1"
+    restart: always
     volumes:
       - /srv/rtpengine/recordings:/var/lib/rtpengine-recording
       - ./rtpengine.conf:/etc/rtpengine/rtpengine.conf
       - /tmp/rtpengine/spool:/var/spool/rtpengine
+    pid: "container:demo_rtpengine_1"
     # entrypoint: /bin/sleep infinity
+  recordings-serve-server:
+    image: python:3.9
+    restart: always
+    volumes:
+      - /srv/rtpengine/recordings:/usr/share/recording:ro
+    entrypoint: 'python3 -m http.server --directory /usr/share/recording 80'
+    ports:
+      - "8080:80"
