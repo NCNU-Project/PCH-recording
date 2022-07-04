@@ -29,4 +29,4 @@ COPY ./rtpengine.conf /etc/rtpengine
 
 ENTRYPOINT ["/entrypoint.sh"]
 
-CMD ["rtpengine"]
+CMD ["rtpengine-recording"]

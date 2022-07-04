@@ -1,28 +1,5 @@
 version: "3.7"  # optional since v1.27.0
 services:
-  kamailio:
-    ports:
-      - "5060:5060/udp"
-    image: efficacy38/pch-kamailio
-    volumes:
-      - ./kamailio.cfg:/etc/kamailio/kamailio.cfg
-    environment:
-      PUBLIC_IPV4: 192.168.1.203
-    entrypoint: /bin/sleep infinity
-    ports:
-      - "5060:5060/udp"
-  rtpengine:
-    image: efficacy38/pch-rtpengine
-    volumes:
-      - /srv/rtpengine/recordings:/var/lib/rtpengine-recording
-      - ./rtpengine.conf:/etc/rtpengine/rtpengine.conf
-      - /tmp/rtpengine/spool:/var/spool/rtpengine
-    privileged: true
-    entrypoint: /bin/sleep infinity
-    expose:
-      - "2223/udp"      # ng control protocol
-    ports:
-      - "20000-20010:20000-20010/udp"
   mysqldb:
     image: mysql:8.0.29
     restart: always
@@ -38,4 +15,34 @@ services:
       - /srv/mysql:/var/lib/mysql
       # store the database file
       - ./init-db-sql-files:/docker-entrypoint-initdb.d
+    # entrypoint: /bin/sleep infinity
+  kamailio:
+    ports:
+      - "5060:5060/udp"
+    image: efficacy38/pch-kamailio
+    volumes:
+      - ./kamailio.cfg:/etc/kamailio/kamailio.cfg
+    environment:
+      PUBLIC_IPV4: 192.168.1.203
+    # entrypoint: /bin/sleep infinity
+    ports:
+      - "5060:5060/udp"
+  rtpengine:
+    image: efficacy38/pch-rtpengine
+    volumes:
+      - ./rtpengine.conf:/etc/rtpengine/rtpengine.conf
+      - /tmp/rtpengine/spool:/var/spool/rtpengine
+    privileged: true
+    # entrypoint: /bin/sleep infinity
+    expose:
+      - "2223/udp"      # ng control protocol
+    ports:
+      - "20000-20010:20000-20010/udp"
+  rtpengine-recorder:
+    image: efficacy38/pch-rtpengine-recording
+    pid: "container:demo_rtpengine_1"
+    volumes:
+      - /srv/rtpengine/recordings:/var/lib/rtpengine-recording
+      - ./rtpengine.conf:/etc/rtpengine/rtpengine.conf
+      - /tmp/rtpengine/spool:/var/spool/rtpengine
     # entrypoint: /bin/sleep infinity
