@@ -1,20 +1,23 @@
-version: "3.9"  # optional since v1.27.0
+version: "3.7"  # optional since v1.27.0
 services:
   kamailio:
     ports:
       - "5060:5060/udp"
-    image: pch-kamailio
+    image: efficacy38/pch-kamailio
     volumes:
       - ./kamailio.cfg:/etc/kamailio/kamailio.cfg
     environment:
-      PUBLIC_IPV4: 192.168.1.218
+      PUBLIC_IPV4: 192.168.1.203
     entrypoint: /bin/sleep infinity
     ports:
       - "5060:5060/udp"
   rtpengine:
-    image: pch-rtpengine
+    image: efficacy38/pch-rtpengine
     volumes:
-      - /srv/rtpengine/recordings:/srv/rtpengine/recordings
+      - /srv/rtpengine/recordings:/var/lib/rtpengine-recording
+      - ./rtpengine.conf:/etc/rtpengine/rtpengine.conf
+      - /tmp/rtpengine/spool:/var/spool/rtpengine
+    privileged: true
     entrypoint: /bin/sleep infinity
     expose:
       - "2223/udp"      # ng control protocol
