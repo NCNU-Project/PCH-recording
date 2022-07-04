@@ -19,8 +19,6 @@ RUN apt-get update \
 
 VOLUME ["/tmp"]
 
-EXPOSE 23000-32768/udp 22222/udp
-
 # Download netdiscover
 RUN curl -qL -o /usr/bin/netdiscover https://github.com/CyCoreSystems/netdiscover/releases/download/v1.2.5/netdiscover.linux.amd64
 RUN chmod +x /usr/bin/netdiscover
@@ -31,4 +29,4 @@ COPY ./rtpengine.conf /etc/rtpengine
 
 ENTRYPOINT ["/entrypoint.sh"]
 
-CMD ["rtpengine"]
+CMD ["rtpengine-recording"]

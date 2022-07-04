@@ -1,17 +1,62 @@
-version: "3.9"  # optional since v1.27.0
+version: "3.7"  # optional since v1.27.0
 services:
+  mysqldb:
+    image: mysql:8.0.29
+    restart: always
+    volumes:
+      - /srv/mysql:/var/lib/mysql
+      # store the database file
+      - ./init-db-sql-files:/docker-entrypoint-initdb.d
+    environment:
+      # MYSQL_ROOT_PASSWORD:
+      MYSQL_DATABASE: kamailio
+      MYSQL_USER: kamailio
+      MYSQL_PASSWORD: kamailiorw
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+    # use the old authentication plugin, because kamailio is not support new authentication method
+    command: --default-authentication-plugin=mysql_native_password
+    # entrypoint: /bin/sleep infinity
   kamailio:
-    ports:
-      - "5060:5060"
-    image: pch-kamailio
+    image: efficacy38/pch-kamailio
+    restart: always
     volumes:
       - ./kamailio.cfg:/etc/kamailio/kamailio.cfg
+    depends_on:
+      - mysqldb
+      - rtpengine
+      - rtpengine-recorder
     environment:
-      PUBLIC_IPV4: 192.168.1.200
-    entrypoint: /bin/sleep infinity
+      PUBLIC_IPV4: 192.168.1.203
+    # entrypoint: /bin/sleep infinity
+    # command: ["./wait-for-it.sh", "mysqldb:3306", "--", "/entrypoint.sh"]
+    ports:
+      - "5060:5060/udp"
   rtpengine:
-    image: pch-rtpengine
+    image: efficacy38/pch-rtpengine
+    restart: always
     volumes:
-      # - ./kamailio.cfg:/etc/kamailio/kamailio.cfg
-      - /srv/rtpengine/recordings:/srv/rtpengine/recordings
-    entrypoint: /bin/sleep infinity
+      - ./rtpengine.conf:/etc/rtpengine/rtpengine.conf
+      - /tmp/rtpengine/spool:/var/spool/rtpengine
+    privileged: true
+    # entrypoint: /bin/sleep infinity
+    expose:
+      - "2223/udp"      # ng control protocol
+    ports:
+      - "20000-20010:20000-20010/udp"
+  rtpengine-recorder:
+    image: efficacy38/pch-rtpengine-recording
+    restart: always
+    volumes:
+      - /srv/rtpengine/recordings:/var/lib/rtpengine-recording
+      - ./rtpengine.conf:/etc/rtpengine/rtpengine.conf
+      - /tmp/rtpengine/spool:/var/spool/rtpengine
+    pid: "container:demo_rtpengine_1"
+    # entrypoint: /bin/sleep infinity
+  recordings-serve-server:
+    image: python:3.9
+    restart: always
+    volumes:
+      - /srv/rtpengine/recordings:/usr/share/recording:ro
+    entrypoint: 'python3 -m http.server --directory /usr/share/recording 80'
+    ports:
+      - "8080:80"

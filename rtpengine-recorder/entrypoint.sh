@@ -21,9 +21,9 @@ echo "$(sed -e "s/PRIVATE_IP/$PRIVATE_IPV4/g" /etc/rtpengine/rtpengine.conf)" > 
 
 cat /etc/rtpengine/rtpengine.conf
 
-if [ "$1" = 'rtpengine' ]; then
+if [ "$1" = 'rtpengine-recording' ]; then
   shift
-  exec rtpengine --config-file /etc/rtpengine/rtpengine.conf  "$@"
+  exec rtpengine-recording --config-file /etc/rtpengine/rtpengine.conf  "$@"
 fi
 
 

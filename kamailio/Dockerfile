@@ -15,6 +15,9 @@ RUN apt-get update &&  apt-get install -y kamailio kamailio-json-modules kamaili
 RUN curl -qL -o /usr/bin/netdiscover https://github.com/CyCoreSystems/netdiscover/releases/download/v1.2.5/netdiscover.linux.amd64
 RUN chmod +x /usr/bin/netdiscover
 
+RUN curl -qL -o /usr/bin/wait-for-it.sh https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh
+RUN chmod +x /usr/bin/wait-for-it.sh
+
 # Install config and templates
 ADD config /etc/kamailio
 # ADD dispatcher.list /data/kamailio/dispatcher.list
