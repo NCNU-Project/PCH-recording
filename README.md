@@ -51,6 +51,15 @@
     - `rtpengine.conf`: this one is at the field `interface`
 4. start the application with: `docker-compose up`
 
+## Add the users for kamailio
+- get into kamailio container: `docker exec -it demo_kamailio_1 /bin/bash`
+- edit kamailio config file: `vim /etc/kamailio/kamctlrc`
+            - uncomment and change `SIP_DOMAIN` to k8s kamailio this machine's public IP(IPv4)
+            - uncomment `DBENGINE`
+            - uncomment `DBHOST` and change it to `mysqldb`(which is the service that is defined at `docker-compose.yml`)
+            - uncomment `DBPORT`, `DBNAME`
+            - uncomment `DBRWUSER`, `DBRWPW`, `DBROUSER`, `DBROPW` to your db credentials(which is `MYSQL_USER`, `MYSQL_PASSWORD`, defined mysqldb's environment under `docker-compose.yml`)
+
 ## application
 - SIP server: `PUBLIC_IPV4:5060`
 - recording files serve server: `PUBLIC_IPV4:8080`
