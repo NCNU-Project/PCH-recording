@@ -42,7 +42,7 @@ services:
     expose:
       - "2223/udp"      # ng control protocol
     ports:
-      - "20000-20010:20000-20010/udp"
+      - "20000-20030:20000-20030/udp"
   rtpengine-recorder:
     image: efficacy38/pch-rtpengine-recording
     restart: always
