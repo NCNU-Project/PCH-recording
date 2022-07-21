@@ -47,8 +47,12 @@
 1. clone this repo: `git clone https://github.com/efficacy38/PCH-recording.git`
 2. cd the working directory: `cd PCH-recording/demo`
 3. please change the PUBLIC_IPV4 in docker-compose.yml and rtpengine.conf to your current public IP which is ipv4
-    - `docker-compose.yml`: this one is under kamailio's environments
-    - `rtpengine.conf`: this one is at the field `interface`, the format is `private_IP!public_IP`, so just edit the `public_IP`'s field
+    - `docker-compose.yml`:
+	- the one is under kamailio's environments
+	- the other one is under kamailio's port mapping
+	- change `163.22.22.67:5060:5060/udp` to "your_IPV4:5060:5060/udp"
+    - `rtpengine.conf`:
+	- this one is at the field `interface`, the format is `private_IP!public_IP`, so just edit the `public_IP`'s field
 4. start the application with: `docker-compose up`
 
 ## Add the users for kamailio

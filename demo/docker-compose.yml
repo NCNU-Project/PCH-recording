@@ -30,7 +30,7 @@ services:
     # entrypoint: /bin/sleep infinity
     # command: ["./wait-for-it.sh", "mysqldb:3306", "--", "/entrypoint.sh"]
     ports:
-      - "5060:5060/udp"
+      - "163.22.22.67:5060:5060/udp"
   rtpengine:
     image: efficacy38/pch-rtpengine
     restart: always
