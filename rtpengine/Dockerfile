@@ -1,14 +1,13 @@
-FROM debian:buster
+FROM debian:bullseye
 
 MAINTAINER Jerry Drung "efficacy38@gmail.com"
 
 RUN apt-get update \
   && apt-get install -y wget curl \
   && TMP_DIR=$(mktemp -d) \
-  && wget http://ms15.voip.edu.tw/~jerry/build.tar.gz -O "$TMP_DIR/build.tar.gz" \
+  && wget http://ms15.voip.edu.tw/~jerry/new-build.tar.gz -O "$TMP_DIR/build.tar.gz" \
   && tar -zxvf "$TMP_DIR/build.tar.gz" -C $TMP_DIR \
-  && dpkg -i $TMP_DIR/build/bcg729/libbcg729-*.deb \
-  && apt --fix-broken install -y $TMP_DIR/build/rtpengine/ngcp-rtpengine-daemon_*.deb $TMP_DIR/build/rtpengine/ngcp-rtpengine-recording-daemon_*.deb \
+  && apt-get install -y $TMP_DIR/ngcp-rtpengine-daemon*.deb $TMP_DIR/ngcp-rtpengine-recording-daemon*.deb \
   && rm -rf $TMP_DIR \
   && rm -rf /var/lib/apt/* \
   && rm -rf /var/lib/cache/* \
