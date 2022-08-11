@@ -62,6 +62,8 @@
     - uncomment `DBHOST` and change it to `mysqldb`(which is the service that is defined at `docker-compose.yml`)
     - uncomment `DBPORT`, `DBNAME`
     - uncomment `DBRWUSER`, `DBRWPW`, `DBROUSER`, `DBROPW` to your db credentials(which is `MYSQL_USER`, `MYSQL_PASSWORD`, defined mysqldb's environment under `docker-compose.yml`)
+    - add user
+    	- kamctl add $username $password
 
 ## application
 - SIP server: `PUBLIC_IPV4:5060`
