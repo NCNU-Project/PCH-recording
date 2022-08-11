@@ -18,7 +18,8 @@ CREATE TABLE `acc_cdrs` (
 	    `start_time` DATETIME DEFAULT '2000-01-01 00:00:00' NOT NULL,
 	    `end_time` DATETIME DEFAULT '2000-01-01 00:00:00' NOT NULL,
 	    `ring_time` DATETIME NOT NULL DEFAULT '2000-01-01 00:00:00',
-	    `duration` FLOAT(10,3) DEFAULT 0 NOT NULL
+	    `duration` FLOAT(10,3) DEFAULT 0 NOT NULL,
+	    `callid` VARCHAR(255) DEFAULT '' NOT NULL
 );
 
 CREATE INDEX start_time_idx ON acc_cdrs (`start_time`);
@@ -39,3 +40,17 @@ CREATE TABLE `missed_calls` (
 CREATE INDEX callid_idx ON missed_calls (`callid`);
 
 INSERT INTO version (table_name, table_version) values ('missed_calls','4');
+
+ALTER TABLE acc ADD COLUMN src_user VARCHAR(64) NOT NULL DEFAULT '';
+ALTER TABLE acc ADD COLUMN src_domain VARCHAR(128) NOT NULL DEFAULT '';
+ALTER TABLE acc ADD COLUMN src_ip varchar(64) NOT NULL default '';
+ALTER TABLE acc ADD COLUMN dst_ouser VARCHAR(64) NOT NULL DEFAULT '';
+ALTER TABLE acc ADD COLUMN dst_user VARCHAR(64) NOT NULL DEFAULT '';
+ALTER TABLE acc ADD COLUMN dst_domain VARCHAR(128) NOT NULL DEFAULT '';
+ALTER TABLE missed_calls ADD COLUMN src_user VARCHAR(64) NOT NULL DEFAULT '';
+ALTER TABLE missed_calls ADD COLUMN src_domain VARCHAR(128) NOT NULL DEFAULT '';
+ALTER TABLE missed_calls ADD COLUMN src_ip varchar(64) NOT NULL default '';
+ALTER TABLE missed_calls ADD COLUMN dst_ouser VARCHAR(64) NOT NULL DEFAULT '';
+ALTER TABLE missed_calls ADD COLUMN dst_user VARCHAR(64) NOT NULL DEFAULT '';
+ALTER TABLE missed_calls ADD COLUMN dst_domain VARCHAR(128) NOT NULL DEFAULT '';
+
