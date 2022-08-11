@@ -35,10 +35,9 @@
     ```
 - install the rtpengine kernel module to optimize the performance of RTP packet forwarding
     1. go to the clean work directory: `cd /tmp`
-    2. get the kernel module: `wget http://ms15.voip.edu.tw/~jerry/build.tar.gz`
-    3. extract the pre-build deb packets: `tar -zxvf build.tar.gz`
-    4. change to the directory that contain the pre-build deb: `cd ./build/rtpengine`
-    5. install the kernel module: `sudo apt install ./ngcp-rtpengine-kernel-dkms_10.5.0.0+0~mr10.5.0.0_all.deb ./ngcp-rtpengine-iptables_*`
+    2. get the kernel module: `wget http://ms15.voip.edu.tw/~jerry/new-build.tar.gz`
+    3. extract the pre-build deb packets: `tar -zxvf new-build.tar.gz`
+    4. install the kernel module: `sudo apt install ./ngcp-rtpengine-kernel-dkms*.deb ./ngcp-rtpengine-iptables_*`
     6. enable the kernel module: `sudo modprobe xt_RTPENGINE`
         - check whether the module is installed: `lsmod  | grep xt_RTPENGINE`
             - if there are prompt with xt_RTPENGINE, then it is install successfully
