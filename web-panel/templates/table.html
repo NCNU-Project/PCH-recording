@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% macro mul(val, type, url_describe) %}
+<td>
+    {% if type == 'text' %}
+    {{ val }}
+    {% elif type == 'url' %}
+    <a href={{ val }}> {{ url_describe }}</a>
+    {% endif %}
+</td>
+{% endmacro %}
+
+{% block body %}
+<a href='/'>back</a>
+<table border='1'>
+    {% for row in rows %}
+    <TR>
+        {% for col in row %}
+        {% set val = col.val|default(col) %}
+        {% set type = col.type|default('text') %}
+        {% set url_describe = col.url_describe|default('錄音') %}
+
+        {{ mul(val, type, url_describe) }}
+        {% endfor %}
+    </TR>
+    {% endfor %}
+</table>
+{% endblock %}
