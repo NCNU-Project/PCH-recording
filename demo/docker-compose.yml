@@ -60,7 +60,7 @@ services:
   #   ports:
   #     - "80:80"
   recordings-serve-server:
-    image: python:3.10
+    image: efficacy38/pch-web:v1.2
     restart: always
     volumes:
       - /srv/rtpengine/recordings:/usr/share/recording:ro
