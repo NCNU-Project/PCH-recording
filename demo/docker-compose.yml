@@ -51,11 +51,21 @@ services:
       - ./rtpengine.conf:/etc/rtpengine/rtpengine.conf
       - /tmp/rtpengine/spool:/var/spool/rtpengine
     # entrypoint: /bin/sleep infinity
+  # recordings-serve-server:
+  #   image: python:3.9
+  #   restart: always
+  #   volumes:
+  #     - /srv/rtpengine/recordings:/usr/share/recording:ro
+  #   entrypoint: 'python3 -m http.server --directory /usr/share/recording 80'
+  #   ports:
+  #     - "80:80"
   recordings-serve-server:
-    image: python:3.9
+    image: efficacy38/pch-web:v1.2
     restart: always
     volumes:
       - /srv/rtpengine/recordings:/usr/share/recording:ro
-    entrypoint: 'python3 -m http.server --directory /usr/share/recording 80'
+    environment:
+      FILE_ROOT_DIRECTORY: /usr/share/recording
+      DATABASE_URI: kamailio:kamailiorw@mysqldb:3306/kamailio
     ports:
-      - "80:80"
+      - "80:5000"
