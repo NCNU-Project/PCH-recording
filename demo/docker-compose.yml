@@ -3,6 +3,7 @@ services:
   mysqldb:
     image: mysql:8.0.29
     restart: always
+    network_mode: "host"
     volumes:
       - /srv/mysql:/var/lib/mysql
       # store the database file
@@ -19,6 +20,7 @@ services:
   kamailio:
     image: efficacy38/pch-kamailio
     restart: always
+    network_mode: "host"
     volumes:
       - ./kamailio.cfg:/etc/kamailio/kamailio.cfg
     depends_on:
@@ -30,19 +32,20 @@ services:
     # entrypoint: /bin/sleep infinity
     # command: ["./wait-for-it.sh", "mysqldb:3306", "--", "/entrypoint.sh"]
     ports:
-      - "163.22.22.67:5060:5060/udp"
+      - "5060:5060/udp"
   rtpengine:
-    image: efficacy38/pch-rtpengine
+    image: efficacy38/pch-rtpengine:v5.1
     restart: always
+    network_mode: "host"
     volumes:
       - ./rtpengine.conf:/etc/rtpengine/rtpengine.conf
       - /tmp/rtpengine/spool:/var/spool/rtpengine
     privileged: true
     # entrypoint: /bin/sleep infinity
-    expose:
-      - "2223/udp"      # ng control protocol
-    ports:
-      - "20000-20030:20000-20030/udp"
+    # expose:
+    #   - "2223/udp"      # ng control protocol
+    # ports:
+    #   - "20000-20030:20000-20030/udp"
   rtpengine-recorder:
     image: efficacy38/pch-rtpengine-recording
     restart: always
