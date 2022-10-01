@@ -28,11 +28,11 @@ services:
       - rtpengine
       - rtpengine-recorder
     environment:
-      PUBLIC_IPV4: 163.22.22.67
+      PUBLIC_IPV4: 163.22.22.68
     # entrypoint: /bin/sleep infinity
     # command: ["./wait-for-it.sh", "mysqldb:3306", "--", "/entrypoint.sh"]
-    ports:
-      - "5060:5060/udp"
+    # ports:
+    #   - "5060:5060/udp"
   rtpengine:
     image: efficacy38/pch-rtpengine:v5.1
     restart: always
