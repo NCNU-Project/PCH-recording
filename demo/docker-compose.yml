@@ -3,7 +3,7 @@ services:
   mysqldb:
     image: mysql:8.0.29
     restart: always
-    network_mode: "host"
+    # network_mode: "host"
     volumes:
       - /srv/mysql:/var/lib/mysql
       # store the database file
@@ -20,7 +20,7 @@ services:
   kamailio:
     image: efficacy38/pch-kamailio
     restart: always
-    network_mode: "host"
+    # network_mode: "host"
     volumes:
       - ./kamailio.cfg:/etc/kamailio/kamailio.cfg
     depends_on:
@@ -29,7 +29,7 @@ services:
       - rtpengine-recorder
     environment:
       PUBLIC_IPV4: 163.22.22.67
-    # entrypoint: /bin/sleep infinity
+    entrypoint: /bin/sleep infinity
     # command: ["./wait-for-it.sh", "mysqldb:3306", "--", "/entrypoint.sh"]
     ports:
       - "5060:5060/udp"
