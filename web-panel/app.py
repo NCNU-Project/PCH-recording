@@ -7,6 +7,7 @@ import json
 from glob import glob
 import os
 from os import path
+import urllib.request
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://' + os.environ["DATABASE_URI"]
@@ -24,7 +25,7 @@ def getFiles(prefix):
     """
 
     file_root = app.config['FILE_ROOT_DIRECTORY']
-    sanitized_file_prefix = path.basename(path.normpath(prefix))
+    sanitized_file_prefix = path.basename(urllib.request.pathname2url(path.normpath(prefix)))
 
     # the filename at least have a number or a char, otherwize just return None
     if any(c.isalpha() or c.isdigit() for c in sanitized_file_prefix):
