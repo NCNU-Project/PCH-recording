@@ -60,7 +60,8 @@ services:
   #   ports:
   #     - "80:80"
   recordings-serve-server:
-    image: efficacy38/pch-web:v1.2
+    # image: efficacy38/pch-web:v1.2
+    image: efficacy38/pch-web:v1.3
     restart: always
     volumes:
       - /srv/rtpengine/recordings:/usr/share/recording:ro
