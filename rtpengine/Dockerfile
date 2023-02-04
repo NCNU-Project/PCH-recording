@@ -1,23 +1,22 @@
+ARG RTPENGINE_VER=mr11.2.1.1
+
+FROM debian:bullseye AS builder
+
+ARG RTPENGINE_VER
+WORKDIR /build
+RUN apt-get update && \
+    apt-get install -y debhelper-compat default-libmysqlclient-dev gperf libavcodec-dev libavfilter-dev libavformat-dev libavutil-dev  libbcg729-dev libbencode-perl libcrypt-openssl-rsa-perl libcrypt-rijndael-perl libcurl4-openssl-dev libdigest-crc-perl libdigest-hmac-perl libevent-dev libglib2.0-dev libhiredis-dev libio-multiplex-perl libio-socket-inet6-perl libiptc-dev libjson-glib-dev libjson-perl libmosquitto-dev libnet-interface-perl libopus-dev libpcap0.8-dev libpcre3-dev libsocket6-perl libspandsp-dev libssl-dev libswresample-dev libsystemd-dev libtest2-suite-perl libwebsockets-dev libxmlrpc-core-c3-dev markdown python3 python3-websockets zlib1g-dev libxtables-dev git && \
+    git clone --branch=${RTPENGINE_VER} https://github.com/sipwise/rtpengine.git && \
+    cd rtpengine && \
+    dpkg-checkbuilddeps && \
+    dpkg-buildpackage  --no-sign
+
 FROM debian:bullseye
-
-MAINTAINER Jerry Drung "efficacy38@gmail.com"
-
-RUN apt-get update \
-  && apt-get install -y wget curl \
-  && TMP_DIR=$(mktemp -d) \
-  && wget http://ms15.voip.edu.tw/~jerry/new-build.tar.gz -O "$TMP_DIR/build.tar.gz" \
-  && tar -zxvf "$TMP_DIR/build.tar.gz" -C $TMP_DIR \
-  && apt-get install -y $TMP_DIR/ngcp-rtpengine-daemon*.deb $TMP_DIR/ngcp-rtpengine-recording-daemon*.deb \
-  && rm -rf $TMP_DIR \
-  && rm -rf /var/lib/apt/* \
-  && rm -rf /var/lib/cache/* \
-  && rm -Rf /var/log/* \
-  && rm -Rf /usr/local/src/* \
-  && rm -Rf /var/lib/apt/lists/* 
-  # && rm -rf /var/lib/dpkg/* \
+COPY --from=builder /build/ngcp-* /build/
+RUN apt-get update && \
+    apt-get install -y /build/ngcp*.deb curl
 
 VOLUME ["/tmp"]
-
 EXPOSE 23000-32768/udp 22222/udp
 
 # Download netdiscover
@@ -26,7 +25,7 @@ RUN chmod +x /usr/bin/netdiscover
 
 COPY ./entrypoint.sh /entrypoint.sh
 
-COPY ./rtpengine.conf /etc/rtpengine
+COPY ./rtpengine.conf /etc/rtpengine.conf
 
 ENTRYPOINT ["/entrypoint.sh"]
 
