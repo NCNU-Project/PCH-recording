@@ -27,6 +27,7 @@ services:
       - rtpengine-recorder
     environment:
       PUBLIC_IPV4: 163.22.22.67
+      TZ: Asia/Taipei
     # entrypoint: /bin/sleep infinity
     # command: ["./wait-for-it.sh", "mysqldb:3306", "--", "/entrypoint.sh"]
     ports:
@@ -38,11 +39,14 @@ services:
       - ./rtpengine.conf:/etc/rtpengine/rtpengine.conf
       - /tmp/rtpengine/spool:/var/spool/rtpengine
     privileged: true
+    cap_drop:
+      - NET_ADMIN
+      - SYS_ADMIN
     # entrypoint: /bin/sleep infinity
     expose:
       - "2223/udp"      # ng control protocol
     ports:
-      - "20000-20030:20000-20030/udp"
+      - "20000-20200:20000-20200/udp"
   rtpengine-recorder:
     image: ghcr.io/ncnu-project/rtpengine-recorder:sha-457e5eb
     restart: always
