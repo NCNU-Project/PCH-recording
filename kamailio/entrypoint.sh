@@ -11,9 +11,7 @@ set -e
 # confd requires that these variables actually be exported
 export PID_FILE
 
-# Make dispatcher.list exists
 mkdir -p /data/kamailio
-touch /data/kamailio/dispatcher.list
 
 : ${PRIVATE_IPV4:="$(netdiscover -field privatev4 ${PROVIDER})"}
 : ${PUBLIC_IPV4:="$(netdiscover -field publicv4 ${PROVIDER})"}
@@ -23,6 +21,7 @@ cat <<ENDHERE >/data/kamailio/local.k
 alias=${PUBLIC_IPV4}
 listen=udp:${PRIVATE_IPV4}:5060 advertise ${PUBLIC_IPV4}:5060
 listen=udp:${PRIVATE_IPV4}:5080
+#!define DBURL "mysql://$DBRWUSER:$DBRWPW@$DBHOST/$DBNAME"
 ENDHERE
 
 # Runs kamaillio, while shipping stderr/stdout to logstash

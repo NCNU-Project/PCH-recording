@@ -42,6 +42,12 @@
         - check whether the module is installed: `lsmod  | grep xt_RTPENGINE`
             - if there are prompt with xt_RTPENGINE, then it is install successfully
 
+## change the database configuartion(optional)
+1. open the `.env` file
+    1. `DBNAME`: table name
+    4. `DBRWUSER`, `DBRWPW`, `DBRWUSER`, `DBRWPW`, `DBROOTPW`: database's account credentials(you MAY need to change it, because of the security issue)
+    3. `DBHOST`: the DNS canonical name of docker compose service, it is mapping to the database's name at `docker-compose.yml`
+
 ## How to deploy this project
 1. clone this repo: `git clone https://github.com/efficacy38/PCH-recording.git`
 2. cd the working directory: `cd PCH-recording/demo`
@@ -52,7 +58,7 @@
 	- change `163.22.22.67:5060:5060/udp` to "your_IPV4:5060:5060/udp"
     - `rtpengine.conf`:
 	- this one is at the field `interface`, the format is `private_IP!public_IP`, so just edit the `public_IP`'s field
-4. start the application with: `docker-compose up`
+4. start the application with: `docker compose up`
 
 ## Add the users for kamailio
 - get into kamailio container: `docker exec -it demo_kamailio_1 /bin/bash`

@@ -8,30 +8,25 @@ services:
       # store the database file
       - ./init-db-sql-files:/docker-entrypoint-initdb.d
     environment:
-      # MYSQL_ROOT_PASSWORD:
-      MYSQL_DATABASE: kamailio
-      MYSQL_USER: kamailio
-      MYSQL_PASSWORD: kamailiorw
-      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+      - MYSQL_DATABASE=${DBNAME}
+      - MYSQL_ROOT_PASSWORD=${DBROOTPW}
+      - DBROOTPW=${DBROOTPW}
+      - DBNAME=${DBNAME}
+      - DBHOST=${DBHOST}
+      - DBRWUSER=${DBRWUSER}
+      - DBRWPW=${DBRWPW}
+      - DBROUSER=${DBROUSER}
+      - DBROPW=${DBROPW}
+    # check more: https://docs.docker.com/engine/reference/builder/#healthcheck
+    healthcheck:
+      test: ["CMD", "mysql", "-u${DBROUSER}", "-p${DBROPW}", "-h${DBHOST}", "${DBNAME}",  "--execute", "SELECT 1" ]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
     # use the old authentication plugin, because kamailio is not support new authentication method
     command: --default-authentication-plugin=mysql_native_password
-    # entrypoint: /bin/sleep infinity
-  kamailio:
-    image: ghcr.io/ncnu-project/kamailio:sha-457e5eb
-    restart: always
-    volumes:
-      - ./kamailio.cfg:/etc/kamailio/kamailio.cfg
-    depends_on:
-      - mysqldb
-      - rtpengine
-      - rtpengine-recorder
-    environment:
-      PUBLIC_IPV4: 163.22.22.67
-      TZ: Asia/Taipei
-    # entrypoint: /bin/sleep infinity
-    # command: ["./wait-for-it.sh", "mysqldb:3306", "--", "/entrypoint.sh"]
-    ports:
-      - "5060:5060/udp"
+
   rtpengine:
     image: ghcr.io/ncnu-project/rtpengine:sha-457e5eb
     restart: always
@@ -47,6 +42,13 @@ services:
       - "2223/udp"      # ng control protocol
     ports:
       - "20000-20200:20000-20200/udp"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/ping" ]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
   rtpengine-recorder:
     image: ghcr.io/ncnu-project/rtpengine-recorder:sha-457e5eb
     restart: always
@@ -55,14 +57,43 @@ services:
       - ./rtpengine.conf:/etc/rtpengine/rtpengine.conf
       - /tmp/rtpengine/spool:/var/spool/rtpengine
     # entrypoint: /bin/sleep infinity
-  # recordings-serve-server:
-  #   image: python:3.9
-  #   restart: always
-  #   volumes:
-  #     - /srv/rtpengine/recordings:/usr/share/recording:ro
-  #   entrypoint: 'python3 -m http.server --directory /usr/share/recording 80'
-  #   ports:
-  #     - "80:80"
+
+  kamailio:
+    # image: ghcr.io/ncnu-project/kamailio:sha-457e5eb
+    image: test-kamailio
+    restart: always
+    environment:
+      - MYSQL_DATABASE=${DBNAME}
+      - MYSQL_ROOT_PASSWORD=${DBROOTPW}
+      - DBROOTPW=${DBROOTPW}
+      - DBNAME=${DBNAME}
+      - DBHOST=${DBHOST}
+      - DBRWUSER=${DBRWUSER}
+      - DBRWPW=${DBRWPW}
+      - DBROUSER=${DBROUSER}
+      - DBROPW=${DBROPW}
+      - PUBLIC_IPV4=163.22.22.67
+      - TZ=Asia/Taipei
+    volumes:
+      - ./kamailio.cfg:/etc/kamailio/kamailio.cfg
+    depends_on:
+      mysqldb:
+        condition: service_healthy
+      rtpengine:
+        condition: service_healthy
+      rtpengine-recorder:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "kamailio", "monitor", "1" ]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    entrypoint: /bin/sleep infinity
+    ports:
+      - "5060:5060/udp"
+    # entrypoint: /bin/sleep infinity
+
   recordings-serve-server:
     # image: efficacy38/pch-web:v1.2
     image: ghcr.io/ncnu-project/web-panel:sha-457e5eb
@@ -71,6 +102,16 @@ services:
       - /srv/rtpengine/recordings:/usr/share/recording:ro
     environment:
       FILE_ROOT_DIRECTORY: /usr/share/recording
-      DATABASE_URI: kamailio:kamailiorw@mysqldb:3306/kamailio
+      # DATABASE_URI: kamailio:kamailiorw@mysqldb:3306/kamailio
+      DATABASE_URI: ${DBRWUSER}:${DBRWPW}@${DBHOST}:3306/${DBNAME}
     ports:
       - "80:5000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    depends_on:
+      mysqldb:
+        condition: service_healthy
