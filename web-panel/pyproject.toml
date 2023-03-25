@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "web-panel"
+version = "0.1.0"
+description = ""
+authors = ["jerry <efficacy38@gmail.com>"]
+readme = "README.md"
+packages = [{include = "web-panel"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+flask = "*"
+flask-sqlalchemy = "*"
+pymysql = "*"
+sqlalchemy = "*"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
