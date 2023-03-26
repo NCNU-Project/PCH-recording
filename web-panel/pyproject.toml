@@ -4,7 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["jerry <efficacy38@gmail.com>"]
 readme = "README.md"
-packages = [{include = "web-panel"}]
+packages = [{include = "web_panel"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"

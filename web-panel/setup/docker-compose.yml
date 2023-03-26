@@ -1,0 +1,22 @@
+version: "3.7"  # optional since v1.27.0
+services:
+  mysqldb:
+    image: mysql:8.0.29
+    restart: always
+    volumes:
+      # if you wants to persist data, just uncomment following line
+      # - /srv/mysql:/var/lib/mysql
+      # store the database file
+      - ./init-db-sql-files:/docker-entrypoint-initdb.d
+    environment:
+      # MYSQL_ROOT_PASSWORD:
+      MYSQL_DATABASE: kamailio
+      MYSQL_USER: kamailio
+      MYSQL_PASSWORD: kamailiorw
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+    ports:
+      - "3306:3306"
+    # use the old authentication plugin, because kamailio is not support new authentication method
+    command: --default-authentication-plugin=mysql_native_password
+    # entrypoint: /bin/sleep infinity
+
