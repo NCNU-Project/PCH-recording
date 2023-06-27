@@ -30,7 +30,19 @@
   - add user
     - kamctl add $username $password
 
-## application
+## useful tools you may want to use
 
-- SIP server: `PUBLIC_IPV4:5060`
-- recording files serve server: `PUBLIC_IPV4:8080`
+1. `sngrep`: a TUI that can monitor/save SIP-flow
+2. [my PJSUA2 library](https://github.com/efficacy38/pjsua2-test): A simple ua that can run as echo server
+   - echo server(run as echo server)
+   ```
+   touch ~/server.log
+   # docker run -it -v ~/server.log:/server.log --network host  ghcr.io/efficacy38/echo-server -u {YOUR_USERNAME} -p {YOUR_PASSWORD} -R sip:{YOUR_SIP_SERVER_IP}
+   docker run -it -v ~/server.log:/server.log --network host  ghcr.io/efficacy38/echo-server -u 1000 -p mypassword -R sip:163.22.1.1
+   ```
+   - call client(run as client, that can call automatically)
+   ```
+   touch ~/server.log
+   # docker run -it efficacy38/pj-client -u {YOUR_USERNAME} -p {YOUR_PASSWORD} -R sip:{YOUR_SIP_SERVER_IP} -c {CALL_URI} -t {CALL_DURATION} -r {SEQUENTIALLY_REPECT_TIMES}
+   docker run -it efficacy38/pj-client -u 1000 -p mypasswd -R sip:163.22.1.1 -c "sip:1000@163.22.1.1" -t 30 -r 3
+   ```
